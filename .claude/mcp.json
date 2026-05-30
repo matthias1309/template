@@ -1,0 +1,51 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/user/projects/my-project"
+      ],
+      "description": "Gives Claude direct filesystem access within the project root. Replace the path argument with your actual project directory."
+    },
+
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "REPLACE_WITH_YOUR_GITHUB_TOKEN"
+      },
+      "description": "GitHub MCP server — enables Claude to read issues, PRs, and repo metadata. Replace the token value with a real PAT that has repo scope."
+    },
+
+    "postgres": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://localhost:5432/myproject_dev"
+      ],
+      "description": "PostgreSQL MCP server — lets Claude inspect the schema and run read-only queries. Replace the connection string with your local DB URL. NEVER point this at a production database."
+    },
+
+    "brave-search": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "REPLACE_WITH_YOUR_BRAVE_API_KEY"
+      },
+      "description": "Brave Search MCP server — allows Claude to search the web. Requires a Brave Search API key from https://api.search.brave.com/."
+    }
+  }
+}
