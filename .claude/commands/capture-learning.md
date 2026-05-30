@@ -4,14 +4,14 @@ The user provides the learning as $ARGUMENTS in free-form text.
 
 Steps:
 1. Parse $ARGUMENTS to extract the key insight. If it sounds project-specific (technical decisions, architecture, tooling, project conventions), write to `.claude/rules/learnings.md`. If it sounds like a personal workflow preference or general working style, write to `~/.claude/rules/learnings.md`.
-2. If unclear, ask one short question: "Projekt-spezifisch oder persönliche Arbeitsweise?"
+2. If unclear, ask one short question: "Project-specific or personal workflow?"
 3. Format the entry as:
 
 ```
 ## <today's date YYYY-MM-DD> — <concise title>
-**Kontext:** <when/where was this noticed>
-**Erkenntnis:** <what was learned>
-**Konsequenz:** <what we change or watch out for going forward>
+**Context:** <when/where was this noticed>
+**Learning:** <what was learned>
+**Action:** <what we change or watch out for going forward>
 ```
 
 4. Append the formatted entry at the bottom of the target file (after the last `---` or at end of file).

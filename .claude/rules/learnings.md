@@ -1,16 +1,16 @@
 # Project Learnings
 
-Dieses Dokument wächst mit dem Projekt. Neue Erkenntnisse werden mit `/capture-learning` erfasst.
-Claude liest diese Datei jede Session und berücksichtigt sie bei Vorschlägen und Entscheidungen.
+This document grows with the project. New insights are captured with `/capture-learning`.
+Claude reads this file every session and factors the entries into suggestions and decisions.
 
 **Format:**
 ```
-## YYYY-MM-DD — Kurztitel
-**Kontext:** Wann/wo ist das aufgefallen?
-**Erkenntnis:** Was haben wir gelernt?
-**Konsequenz:** Was ändern wir dadurch?
+## YYYY-MM-DD — Short title
+**Context:** When/where was this noticed?
+**Learning:** What did we learn?
+**Action:** What do we change or watch out for going forward?
 ```
 
 ---
 
-<!-- Einträge werden hier unten chronologisch angehängt -->
+<!-- Entries are appended here chronologically -->

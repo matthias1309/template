@@ -106,6 +106,13 @@ tests/
 
 ---
 
+## Language
+
+- **All repository content is written in English** — code, comments, rules, commands, docs, commit messages.
+- Conversation with the developer may happen in any language; the repository always stays English.
+
+---
+
 ## Important Notes
 
 - **Never commit secrets.** API keys, passwords, tokens, and credentials must never appear
