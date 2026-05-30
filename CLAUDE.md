@@ -46,6 +46,7 @@ Claude should read those files before writing or modifying code.
 - **Coding style:** `.claude/rules/coding-style.md`
 - **Testing practices:** `.claude/rules/testing-practices.md`
 - **Git workflow:** `.claude/rules/git-workflow.md`
+- **Project learnings:** `.claude/rules/learnings.md`
 
 When in doubt, follow the existing patterns in the codebase rather than inventing new ones.
 If a convention is unclear, ask before proceeding.
