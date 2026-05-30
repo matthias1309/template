@@ -1,0 +1,13 @@
+# Claude Code local overrides — personal preferences, not for the team
+CLAUDE.local.md
+
+# Hook logs — generated at runtime
+.claude/logs/
+
+# Common project artifacts (extend as needed)
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
