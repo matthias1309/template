@@ -7,6 +7,15 @@
 - A failing test should tell you exactly what broke and why
 - Prefer fewer, meaningful tests over many shallow ones
 
+## FIRST Principles
+
+Tests must be:
+- **Fast** — run in milliseconds, never block on I/O
+- **Independent** — no test depends on another; any order must work
+- **Repeatable** — same result every time, in any environment
+- **Self-Validating** — pass or fail with no manual inspection needed
+- **Timely** — written alongside the code, not as an afterthought
+
 ## Test Structure
 
 Use Arrange-Act-Assert (AAA):
