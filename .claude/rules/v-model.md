@@ -5,7 +5,7 @@ Every feature follows the V-Model sequence. Claude must never skip or reorder st
 ## Sequence (strictly enforced)
 
 ```
-REQ  →  ARCH  →  TEST-SPEC  →  Tests (TDD)  →  Implementation
+REQ  →  ARCH  →  TEST-SPEC  →  Tests (TDD)  →  Implementation  →  Code Review
 ```
 
 1. **REQ** — A User Story exists in `docs/requirements/REQ-XXX.md`
@@ -13,6 +13,7 @@ REQ  →  ARCH  →  TEST-SPEC  →  Tests (TDD)  →  Implementation
 3. **TEST-SPEC** — A test specification exists in `docs/test-specs/TEST-XXX.md` that maps every Gherkin AC to a concrete test case
 4. **Tests** — Failing tests are written from the TEST-SPEC before any implementation code
 5. **Implementation** — Code is written to make the tests pass
+6. **Code Review** — A review document `docs/code-reviews/CR-XXX.md` is created from the template, filled in, and signed off before merging
 
 ## TDD Rule
 
@@ -30,6 +31,7 @@ REQ  →  ARCH  →  TEST-SPEC  →  Tests (TDD)  →  Implementation
 | Test Spec | `TEST-XXX` | `docs/test-specs/TEST-XXX.md` |
 | Acceptance Criterion | `AC-XXX-YY` | Inside the REQ file |
 | Test Case | `TC-XXX-YY` | Inside the TEST-SPEC file |
+| Code Review | `CR-XXX` | `docs/code-reviews/CR-XXX.md` |
 
 IDs are zero-padded three-digit numbers (001, 002, ...).
 
@@ -39,10 +41,13 @@ IDs are zero-padded three-digit numbers (001, 002, ...).
 - Every TEST-SPEC references one ARCH and lists which ACs it verifies: `Traces: ARCH-XXX`, `Verifies: REQ-XXX (AC-XXX-01, AC-XXX-02)`
 - Every test function or `it()` block references its TEST-SPEC ID in a comment: `// TC-001-01`
 - Commit messages reference the REQ: `feat(auth): implement login — REQ-001`
+- Every CR references the REQ, ARCH, and TEST-SPEC it covers: `Traces: REQ-XXX`, `Covers: ARCH-XXX, TEST-XXX`
 
 ## Claude Behaviour
 
 - Before writing any implementation code, check that REQ + ARCH + TEST-SPEC exist for the feature
 - If any artifact is missing, stop and tell the user which step is next
 - When creating test stubs, copy the Gherkin scenario as a comment above the test
+- A feature is not complete until a CR-XXX.md with status `approved` exists in `docs/code-reviews/`
+- The template for new reviews is `docs/code-reviews/CR-TEMPLATE.md` — copy and rename it to `CR-XXX.md`
 - Run `/traceability` at any time to get an overview of coverage gaps
