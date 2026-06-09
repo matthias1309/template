@@ -43,6 +43,31 @@ IDs are zero-padded three-digit numbers (001, 002, ...).
 - Commit messages reference the REQ: `feat(auth): implement login — REQ-001`
 - Every CR references the REQ, ARCH, and TEST-SPEC it covers: `Traces: REQ-XXX`, `Covers: ARCH-XXX, TEST-XXX`
 
+## Code-Level Traceability
+
+Implementation code is **not** annotated with REQ IDs in comments — that creates maintenance debt and violates the "comments explain why, not what" principle.
+
+Instead, traceability from requirements to code is derived from **git history**:
+
+- The commit message convention (`feat(auth): implement login — REQ-001`) is the link
+- Every commit that implements or changes behavior for a requirement must reference the REQ ID
+- This makes the full chain queryable without touching production code
+
+**Querying the chain manually:**
+
+```bash
+# All commits for a requirement
+git log --oneline --grep="REQ-001"
+
+# Which implementation files were changed for a requirement
+git log --oneline --name-only --grep="REQ-001"
+
+# Full diff of all implementation changes for a requirement
+git log -p --grep="REQ-001" -- src/
+```
+
+**Automated:** Run `/traceability` — it executes these queries for every REQ and includes the results in the coverage matrix.
+
 ## Claude Behaviour
 
 - Before writing any implementation code, check that REQ + ARCH + TEST-SPEC exist for the feature

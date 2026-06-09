@@ -17,10 +17,12 @@ Ein wiederverwendbares Startpunkt-Template für neue Projekte mit Claude Code. E
 │   ├── rules/
 │   │   ├── coding-style.md      # Code-Konventionen
 │   │   ├── testing-practices.md # Test-Richtlinien
-│   │   └── git-workflow.md      # Git-Konventionen
+│   │   ├── git-workflow.md      # Git-Konventionen
+│   │   └── v-model.md           # V-Model-Prozess & Traceability
 │   ├── commands/
 │   │   ├── summarize-pr.md      # /summarize-pr Slash-Command
-│   │   └── todo-check.md        # /todo-check Slash-Command
+│   │   ├── todo-check.md        # /todo-check Slash-Command
+│   │   └── traceability.md      # /traceability Slash-Command
 │   └── hooks/
 │       ├── pre-tool-use.sh      # Läuft vor jedem Tool-Aufruf
 │       └── post-tool-use.sh     # Läuft nach jedem Tool-Aufruf
@@ -71,10 +73,65 @@ Dateien im `rules/`-Verzeichnis werden in `CLAUDE.md` referenziert und geben Cla
 - `coding-style.md` — Namenskonventionen, Formatierung, Typen
 - `testing-practices.md` — AAA-Pattern, Mocking, Coverage-Erwartungen
 - `git-workflow.md` — Branch-Namen, Commit-Messages (Conventional Commits), PR-Regeln
+- `v-model.md` — V-Model-Prozess, TDD-Regel, Traceability-Konventionen
 
 **Neue Rule-Datei hinzufügen:**
 1. Datei in `.claude/rules/` anlegen, z. B. `security.md`
 2. In `CLAUDE.md` referenzieren: `Siehe .claude/rules/security.md für Security-Richtlinien.`
+
+---
+
+## V-Model & Traceability
+
+Das Template erzwingt einen V-Model-Entwicklungsprozess. Jedes Feature durchläuft diese Schritte in fester Reihenfolge:
+
+```
+REQ  →  ARCH  →  TEST-SPEC  →  Tests (TDD)  →  Implementation  →  Code Review
+```
+
+### Artefakte und Ablageorte
+
+| Artefakt | ID | Ablageort |
+|---|---|---|
+| User Story | `REQ-XXX` | `docs/requirements/REQ-XXX.md` |
+| Architektur | `ARCH-XXX` | `docs/architecture/ARCH-XXX.md` |
+| Testspezifikation | `TEST-XXX` | `docs/test-specs/TEST-XXX.md` |
+| Code Review | `CR-XXX` | `docs/code-reviews/CR-XXX.md` |
+
+IDs sind nullpadded dreistellig: `001`, `002`, …
+
+### Slash-Commands im Workflow
+
+| Command | Wann aufrufen |
+|---|---|
+| `/new-requirement` | Zu Beginn: neue User Story anlegen |
+| `/new-arch REQ-XXX` | Nach REQ: Architektur-Dokument anlegen |
+| `/new-test-spec ARCH-XXX` | Nach ARCH: Testspezifikation anlegen |
+| `/traceability` | Jederzeit: Lücken im Coverage-Überblick anzeigen |
+
+### Code-Level-Traceability ohne Kommentar-Overhead
+
+Implementierungscode enthält **keine** REQ-IDs als Kommentare. Stattdessen steckt die Verlinkung in den **Commit-Messages**:
+
+```
+feat(auth): implement login — REQ-001
+fix(api): correct status code — REQ-003
+```
+
+Damit ist die vollständige Kette von einer Anforderung bis zu den konkreten Code-Zeilen über Git-History abfragbar — ohne Maintenance-Aufwand im Produktionscode:
+
+```bash
+# Alle Commits zu einer Anforderung
+git log --oneline --grep="REQ-001"
+
+# Welche Implementierungsdateien wurden berührt?
+git log --oneline --name-only --grep="REQ-001"
+
+# Vollständiger Diff der Implementierungsänderungen
+git log -p --grep="REQ-001" -- src/
+```
+
+`/traceability` führt diese Abfragen automatisch für alle REQs aus und zeigt das Ergebnis in einer kompakten Matrix.
 
 ---
 
