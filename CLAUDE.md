@@ -47,6 +47,7 @@ Claude should read those files before writing or modifying code.
 - **Testing practices:** `.claude/rules/testing-practices.md`
 - **Git workflow:** `.claude/rules/git-workflow.md`
 - **V-Model & traceability:** `.claude/rules/v-model.md`
+- **Security:** `.claude/rules/security.md`
 - **Project learnings:** `.claude/rules/learnings.md`
 
 When in doubt, follow the existing patterns in the codebase rather than inventing new ones.
