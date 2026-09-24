@@ -4,7 +4,7 @@ Steps:
 1. If $ARGUMENTS contains an ARCH ID (e.g. "ARCH-001"), use it. Otherwise ask: "Which ARCH does this test spec cover?"
 2. Read `docs/architecture/<ARCH-ID>.md` to find the traced REQ ID.
 3. Read `docs/requirements/<REQ-ID>.md` to get all Gherkin ACs.
-4. Scan `docs/test-specs/` for existing TEST-XXX.md files and determine the next ID.
+4. The TEST ID mirrors the REQ/ARCH number (ARCH-017 → TEST-017, TCs TC-017-01 …). If that file already exists, stop and ask whether to extend it instead.
 5. For each AC in the REQ, create one test case entry. Number them TC-<TEST-NUM>-01, TC-<TEST-NUM>-02, etc.
 6. Create `docs/test-specs/<TEST-ID>.md` using this exact template:
 

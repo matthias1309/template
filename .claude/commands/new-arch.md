@@ -3,7 +3,7 @@ Create a new architecture document for a requirement.
 Steps:
 1. If $ARGUMENTS contains a REQ ID (e.g. "REQ-001"), use it. Otherwise ask: "Which REQ does this architecture address?"
 2. Read the referenced REQ file from `docs/requirements/<REQ-ID>.md` to understand the story and ACs.
-3. Scan `docs/architecture/` for existing ARCH-XXX.md files and determine the next ID.
+3. The ARCH ID mirrors the REQ number (REQ-017 → ARCH-017). If that file already exists, stop and ask whether to extend it instead.
 4. Ask the user: "What is the title of this architecture document?" (e.g. "JWT Authentication Flow")
 5. Ask: "Describe the design in a few sentences — components involved, data flow, key decisions."
 6. Create the file `docs/architecture/<ID>.md` using this exact template:

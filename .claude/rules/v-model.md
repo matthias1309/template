@@ -33,7 +33,10 @@ REQ  →  ARCH  →  TEST-SPEC  →  Tests (TDD)  →  Implementation  →  Code
 | Test Case | `TC-XXX-YY` | Inside the TEST-SPEC file |
 | Code Review | `CR-XXX` | `docs/code-reviews/CR-XXX.md` |
 
-IDs are zero-padded three-digit numbers (001, 002, ...).
+IDs are zero-padded three-digit numbers (001, 002, ...). **ARCH and TEST numbers mirror the REQ
+number** (REQ-017 → ARCH-017 → TEST-017 → TC-017-YY), so the whole chain shares one number and
+"which ARCH belongs to REQ-017?" never needs a lookup. CR numbers are independent: always the next
+free number (a CR may cover several REQs), never pre-assigned in a plan.
 
 ## Linking Rules
 
@@ -72,7 +75,9 @@ git log -p --grep="REQ-001" -- src/
 
 - Before writing any implementation code, check that REQ + ARCH + TEST-SPEC exist for the feature
 - If any artifact is missing, stop and tell the user which step is next
+- Before writing a new REQ, check `docs/SYSTEM-MAP.md` (regenerate with `/system-map` if stale)
+  for REQs that touch the same modules or tables
 - When creating test stubs, copy the Gherkin scenario as a comment above the test
 - A feature is not complete until a CR-XXX.md with status `approved` exists in `docs/code-reviews/`
-- The template for new reviews is `docs/code-reviews/CR-TEMPLATE.md` — copy and rename it to `CR-XXX.md`
+- The template for new reviews is `docs/code-reviews/CR-TEMPLATE.md` — copy it to `CR-XXX.md` with the next free number
 - Run `/traceability` at any time to get an overview of coverage gaps
