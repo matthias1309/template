@@ -1,14 +1,23 @@
 {
-  "model": "claude-sonnet-4-5",
-
   "permissions": {
     "allow": [
-      "Bash(git *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git checkout *)",
+      "Bash(git switch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git mv *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
       "Bash(npm run *)",
       "Bash(npm test *)",
-      "Bash(npx *)",
-      "Bash(node *)",
-      "Bash(python *)",
+      "Bash(npm ci)",
+      "Bash(npm ls *)",
+      "Bash(npm audit *)",
       "Bash(pytest *)",
       "Bash(ruff *)",
       "Bash(mypy *)",
@@ -16,51 +25,41 @@
       "Bash(find *)",
       "Bash(grep *)",
       "Bash(cat *)",
-      "Bash(echo *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
       "Bash(mkdir *)",
-      "Bash(cp *)",
-      "Bash(mv *)",
-      "Bash(touch *)",
-      "Read(**)",
-      "Edit(**)",
-      "Write(**)"
+      "Bash(date *)"
     ],
     "deny": [
-      "Bash(rm -rf /)",
       "Bash(sudo *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
       "Bash(curl * | bash)",
+      "Bash(curl * | sh)",
       "Bash(wget * | sh)",
-      "Bash(git push --force)",
-      "Bash(git push -f)",
-      "Bash(git reset --hard HEAD~*)",
-      "Bash(npm publish *)"
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f)",
+      "Bash(git reset --hard*)",
+      "Bash(git filter-repo*)",
+      "Bash(npm publish *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/secrets.env)",
+      "Read(./**/*.db)"
     ]
   },
 
-  "env": {
-    "NODE_ENV": "development",
-    "LOG_LEVEL": "debug"
-  },
-
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/pre-tool-use.sh"
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/post-tool-use.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh\""
           }
         ]
       }

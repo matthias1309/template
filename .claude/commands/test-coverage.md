@@ -3,8 +3,14 @@ Check whether every Test Case (TC) defined in TEST-SPEC files is implemented in 
 Steps:
 1. Scan `docs/test-specs/` for all TEST-XXX.md files
 2. For each TEST-SPEC, extract all TC IDs (pattern: `### TC-XXX-YY`)
-3. For each TC ID, search the entire codebase (`tests/`, `e2e/`) for a comment referencing it (pattern: `// TC-XXX-YY`)
-4. Output the results in this format:
+3. For each TC ID, search the entire codebase (`tests/`, `e2e/`) for a comment referencing it (pattern: `// TC-XXX-YY`).
+   A single comment may list several IDs (`// TC-005-01 / TC-005-02`) — match every ID on the line,
+   not just the first.
+4. Classify TCs that are not plainly covered, using the TEST-SPEC section text:
+   - test is named `known issue: …` (regression test pinning a confirmed bug) → 🔴 known issue,
+     even though a TC comment exists — the AC is currently violated, not verified
+   - section says `accepted` → ⚠️ accepted (reason is in the TEST-SPEC)
+5. Output the results in this format:
 
 ## Test Coverage Matrix
 
@@ -18,6 +24,8 @@ Legend:
 - ✅ = TC comment found in at least one test file
 - ❌ = no `// TC-XXX-YY` comment found anywhere in `tests/` or `e2e/`
 - ⚠️ = TEST-SPEC status is `draft` (test cases may still be provisional)
+- ⚠️ accepted = gap deliberately accepted in the TEST-SPEC (not counted as missing)
+- 🔴 = known issue: a regression test pins current, incorrect behavior — needs an implementation fix
 
 ## Missing Implementations
 
@@ -36,5 +44,7 @@ Example output:
 
 - Total TCs defined in TEST-SPECs: X
 - Implemented (TC comment found): X  ✅
+- Known issues (pinned bugs): X  🔴
+- Accepted gaps: X  ⚠️
 - Missing (no TC comment in code): X  ❌
 - TEST-SPECs with full coverage: X / Y

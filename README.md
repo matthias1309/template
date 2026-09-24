@@ -24,8 +24,7 @@ Ein wiederverwendbares Startpunkt-Template für neue Projekte mit Claude Code. E
 │   │   ├── todo-check.md        # /todo-check Slash-Command
 │   │   └── traceability.md      # /traceability Slash-Command
 │   └── hooks/
-│       ├── pre-tool-use.sh      # Läuft vor jedem Tool-Aufruf
-│       └── post-tool-use.sh     # Läuft nach jedem Tool-Aufruf
+│       └── post-tool-use.sh     # Lintet jede bearbeitete Datei (ESLint / ruff)
 ```
 
 ---
@@ -168,7 +167,7 @@ Hooks sind Shell-Skripte, die Claude Code bei bestimmten Ereignissen ausführt.
 
 | Event | Wann | Dateiname (Konvention) |
 |---|---|---|
-| `PreToolUse` | Vor jedem Tool-Aufruf | `pre-tool-use.sh` |
+| `PreToolUse` | Vor jedem Tool-Aufruf | `pre-tool-use.sh` (im Template nicht enthalten) |
 | `PostToolUse` | Nach jedem Tool-Aufruf | `post-tool-use.sh` |
 | `Stop` | Wenn Claude seine Antwort beendet | `stop.sh` |
 | `Notification` | Bei Benachrichtigungen | `notification.sh` |
@@ -178,29 +177,37 @@ Hooks sind Shell-Skripte, die Claude Code bei bestimmten Ereignissen ausführt.
 ```json
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "",
-        "hooks": [{ "type": "command", "command": "bash .claude/hooks/pre-tool-use.sh" }]
-      }
-    ],
     "PostToolUse": [
       {
-        "matcher": "",
-        "hooks": [{ "type": "command", "command": "bash .claude/hooks/post-tool-use.sh" }]
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh\"" }
+        ]
       }
     ]
   }
 }
 ```
 
+`$CLAUDE_PROJECT_DIR` sorgt dafür, dass der Hook auch aus Unterverzeichnissen gefunden wird.
+
+Der mitgelieferte `post-tool-use.sh` lintet jede bearbeitete `.ts/.tsx/.js/.jsx`-Datei mit
+ESLint (falls unter `node_modules/.bin` installiert) und jede `.py`-Datei mit `ruff` (falls
+installiert). Bei Befunden beendet er sich mit Exit-Code `2` — Claude bekommt die Linter-Ausgabe
+zurück und behebt sie sofort. Ein reiner Hinweis mit Exit-Code `0` wird in der Praxis ignoriert.
+Formatter (Prettier, `ruff format`) laufen bewusst nicht im Hook, weil sie in einem noch nicht
+formatierten Projekt ganze Dateien umschreiben würden.
+
+Ein Hook, der jeden Tool-Aufruf nur protokolliert, ist nicht enthalten — er erzeugt Logdateien,
+die niemand liest.
+
 ### Input / Output der Hooks
 
-Hooks empfangen JSON via `stdin` mit Infos zum Tool-Aufruf. Bei `PreToolUse`:
-- Exit code `0` → Tool-Aufruf wird durchgelassen
-- Exit code `!= 0` → Tool-Aufruf wird blockiert (stderr-Output wird an Claude zurückgegeben)
-
-Bei `PostToolUse` wird der Exit-Code ignoriert — reine Benachrichtigung.
+Hooks empfangen JSON via `stdin` mit Infos zum Tool-Aufruf. Exit-Codes:
+- `0` → OK; stderr wird Claude nicht gezeigt
+- `2` → bei `PreToolUse` wird der Tool-Aufruf blockiert, bei `PostToolUse` bekommt Claude stderr
+  als Rückmeldung (so arbeitet der Lint-Hook)
+- andere → Fehler wird nur dem Nutzer angezeigt, Claude sieht ihn nicht
 
 ---
 
@@ -239,20 +246,25 @@ Wichtige Felder:
 ```json
 {
   "permissions": {
-    "allow": ["Bash(git *)", "Bash(npm run *)"],
-    "deny": ["Bash(rm -rf *)"]
-  },
-  "env": {
-    "NODE_ENV": "development"
+    "allow": ["Bash(git status *)", "Bash(git commit *)", "Bash(npm run *)"],
+    "deny": ["Bash(git push --force*)", "Bash(git reset --hard*)", "Read(./.env)"]
   },
   "hooks": { ... }
 }
 ```
 
-- `permissions.allow` — Tool-Aufrufe, die ohne Nachfrage erlaubt sind
-- `permissions.deny` — Tool-Aufrufe, die immer blockiert werden
-- `env` — Umgebungsvariablen für die Session
+- `permissions.allow` — Tool-Aufrufe, die ohne Nachfrage erlaubt sind. Eng halten: einzelne
+  `git`-Unterbefehle statt `Bash(git *)` (das würde auch `git push --force` freigeben), kein
+  pauschales `Edit(**)`/`Write(**)`.
+- `permissions.deny` — Tool-Aufrufe, die immer blockiert werden: alle Force-Push-Varianten,
+  `git reset --hard`, History-Rewrites (`git filter-repo`) und das Lesen von `.env`-, Secret- und
+  Datenbankdateien.
 - `hooks` — Hook-Konfiguration (siehe oben)
+
+Bewusst **nicht** gesetzt:
+- `model` — ein gepinntes Modell veraltet schnell; das Modell wählt jeder selbst.
+- `env` — z. B. `NODE_ENV=development` würde in jeden von Claude gestarteten Befehl durchsickern,
+  auch in Builds und Tests.
 
 ---
 
@@ -261,8 +273,9 @@ Wichtige Felder:
 Mindestens diese Einträge sollten ignoriert werden:
 
 ```
-CLAUDE.local.md      # Persönliche Notizen
-.claude/logs/        # Hook-Logdateien
+CLAUDE.local.md              # Persönliche Notizen
+.claude/settings.local.json  # Persönliche Permissions (enthalten gern versehentlich Secrets)
+.env*                        # Umgebungsvariablen mit Secrets
 ```
 
 ---
